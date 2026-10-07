@@ -15,7 +15,8 @@
     "check": "npm run lint && npm run typecheck && npm test",
     "seed:generate": "tsx scripts/generate-seed.ts",
     "upload-images": "tsx scripts/upload-images.ts",
-    "screenshots": "playwright test"
+    "screenshots": "playwright test",
+    "db:types": "tsx scripts/generate-db-types.ts && prettier --write src/types/database.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
@@ -29,11 +30,13 @@
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-hook-form": "^7.89.0",
+    "server-only": "^0.0.1",
     "sonner": "^2.0.8",
     "tailwind-merge": "^3.7.0",
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
     "@playwright/test": "^1.63.0",
     "@tailwindcss/turbopack": "^4",
     "@types/node": "^20",
