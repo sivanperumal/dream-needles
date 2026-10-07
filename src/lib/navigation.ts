@@ -8,6 +8,7 @@ export type NavCollectionRow = {
   parent_id: string | null;
   name: string;
   slug: string;
+  description: string;
   show_in_menu: boolean;
   show_view_all: boolean;
   menu_order: number;
@@ -29,6 +30,8 @@ export type NavMenuItemRow = {
 export type MenuNode = {
   label: string;
   href: string;
+  /** Collection description (featured card in the mega-menu). */
+  description: string;
   badge: string | null;
   children: MenuNode[];
   /** "View all" link shown under the children, when enabled. */
@@ -63,6 +66,7 @@ export function buildHeaderMenu(
   const toNode = (c: NavCollectionRow, depth: number): MenuNode => ({
     label: c.name,
     href: collectionHref(c.slug),
+    description: c.description,
     badge: c.menu_badge,
     children:
       depth < 2
@@ -80,6 +84,7 @@ export function buildHeaderMenu(
       href: i.collection_slug
         ? collectionHref(i.collection_slug)
         : (i.url ?? "/"),
+      description: "",
       badge: null,
       children: [],
       viewAllHref: null,

@@ -1,12 +1,18 @@
 import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import { CACHE_TAGS } from "@/lib/cache-tags";
+import { isSupabaseConfigured } from "@/lib/env";
 import {
   buildFooterColumns,
   buildHeaderMenu,
   type NavCollectionRow,
   type NavMenuItemRow,
 } from "@/lib/navigation";
+import {
+  previewNavigation,
+  previewSettings,
+  warnPreviewMode,
+} from "@/lib/queries/preview";
 import { createPublicClient } from "@/lib/supabase/public";
 import type {
   Breadcrumb,
@@ -29,13 +35,17 @@ export async function getNavigation() {
   "use cache";
   cacheLife("hours");
   cacheTag(CACHE_TAGS.navigation, CACHE_TAGS.catalog);
+  if (!isSupabaseConfigured()) {
+    warnPreviewMode();
+    return previewNavigation();
+  }
 
   const supabase = createPublicClient();
   const [collections, items] = await Promise.all([
     supabase
       .from("collections")
       .select(
-        "id, parent_id, name, slug, show_in_menu, show_view_all, menu_order, menu_badge, is_system",
+        "id, parent_id, name, slug, description, show_in_menu, show_view_all, menu_order, menu_badge, is_system",
       ),
     supabase
       .from("menu_items")
@@ -66,6 +76,7 @@ export async function getStoreSettings() {
   "use cache";
   cacheLife("hours");
   cacheTag(CACHE_TAGS.settings);
+  if (!isSupabaseConfigured()) return previewSettings();
 
   const { data, error } = await createPublicClient()
     .from("store_settings")

@@ -1,26 +1,75 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/*
+ * Design tokens from the Figma "Home page Desktop" frame (the style master).
+ * Figma uses Tailwind's default gray/purple scales and shadows, so only the
+ * brand colours and font are defined here; everything else is stock Tailwind.
+ */
+@theme {
+  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* Brand */
+  --color-brand: #4d0851; /* primary purple */
+  --color-brand-hover: #3b063e;
+  --color-brand-light: #f8ebf9; /* light purple surfaces, top bar, footer */
+  --color-brand-tint: #faf5ff; /* active nav tab, subtle highlights (purple-50) */
+  --color-whatsapp: #25d366;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  /* Hero overlay gradient on category cards */
+  --color-overlay-from: rgb(0 0 0 / 0.05);
+  --color-overlay-via: rgb(15 23 42 / 0.35);
+  --color-overlay-to: rgb(10 15 30 / 0.9);
+
+  /* Page container: 1280 max with 32px gutters (Figma: 1216 content width) */
+  --container-page: 80rem;
+
+  --animate-ticker: ticker 30s linear infinite;
+  @keyframes ticker {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-white font-sans text-gray-700 antialiased;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand;
+  }
+  dialog::backdrop {
+    background: rgb(17 24 39 / 0.45);
+    backdrop-filter: blur(2px);
+  }
+}
+
+@utility container-page {
+  width: 100%;
+  max-width: var(--container-page);
+  margin-inline: auto;
+  padding-inline: 1rem;
+  @variant md {
+    padding-inline: 1.5rem;
+  }
+  @variant xl {
+    padding-inline: 2rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

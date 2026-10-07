@@ -64,3 +64,14 @@ function parse<T extends z.ZodType>(schema: T, values: unknown): z.infer<T> {
   }
   return result.data;
 }
+
+/**
+ * True once the Supabase keys are in .env.local. Until then the storefront
+ * runs in "preview mode" with seed navigation (see lib/queries/preview.ts).
+ */
+export function isSupabaseConfigured(): boolean {
+  return Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  );
+}

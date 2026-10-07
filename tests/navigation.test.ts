@@ -17,6 +17,7 @@ const col = (
   parent_id: parent,
   name,
   slug: name.toLowerCase().replace(/[^a-z]+/g, "-"),
+  description: "",
   show_in_menu: true,
   show_view_all: false,
   menu_order: order,
