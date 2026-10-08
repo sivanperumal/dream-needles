@@ -35,8 +35,6 @@ const serverSchema = z.object({
   RAZORPAY_WEBHOOK_SECRET: z.string().optional(),
   GOOGLE_SHEETS_WEBHOOK_URL: z.url().optional(),
   GOOGLE_SHEETS_SECRET: z.string().optional(),
-  RESEND_API_KEY: z.string().optional(),
-  EMAIL_FROM: z.string().optional(),
 });
 
 export type ServerEnv = z.infer<typeof serverSchema>;
@@ -53,9 +51,42 @@ export function serverEnv(): ServerEnv {
     GOOGLE_SHEETS_WEBHOOK_URL:
       process.env.GOOGLE_SHEETS_WEBHOOK_URL || undefined,
     GOOGLE_SHEETS_SECRET: process.env.GOOGLE_SHEETS_SECRET || undefined,
-    RESEND_API_KEY: process.env.RESEND_API_KEY || undefined,
-    EMAIL_FROM: process.env.EMAIL_FROM || undefined,
   });
+}
+
+const emailSchema = z.object({
+  SMTP_HOST: z.string().min(1),
+  SMTP_PORT: z.coerce.number().int().min(1).max(65535),
+  SMTP_USER: z.string().min(1),
+  SMTP_PASS: z.string().min(1),
+  EMAIL_FROM: z.string().min(3),
+});
+
+export type EmailEnv = z.infer<typeof emailSchema>;
+
+/**
+ * SMTP settings for order emails (Gmail by default; Resend or Brevo work by
+ * changing these values only). Returns null when email isn't configured, so
+ * callers skip sending instead of failing the order.
+ */
+export function emailEnv(): EmailEnv | null {
+  const values = {
+    SMTP_HOST: process.env.SMTP_HOST || undefined,
+    SMTP_PORT: process.env.SMTP_PORT || undefined,
+    SMTP_USER: process.env.SMTP_USER || undefined,
+    SMTP_PASS: process.env.SMTP_PASS || undefined,
+    EMAIL_FROM: process.env.EMAIL_FROM || undefined,
+  };
+  if (Object.values(values).every((v) => v === undefined)) return null;
+  const result = emailSchema.safeParse(values);
+  if (!result.success) {
+    const missing = result.error.issues.map((i) => i.path.join(".")).join(", ");
+    console.warn(
+      `[email] SMTP is partly configured; check: ${missing}. Emails will be skipped.`,
+    );
+    return null;
+  }
+  return result.data;
 }
 
 function parse<T extends z.ZodType>(schema: T, values: unknown): z.infer<T> {

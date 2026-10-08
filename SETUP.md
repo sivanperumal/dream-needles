@@ -152,67 +152,124 @@ By default Supabase emails a magic link, not a code. Change both templates:
 3. Under **Redirect URLs** click **Add URL** and add `http://localhost:3000/**`.
 4. Save.
 
-### 2.4 ⚠️ Important: email limits, and connecting Resend
+### 2.4 ⚠️ Important: email limits, and sending through Gmail
 
 Supabase's built-in email sender only allows **a few emails per hour** and
 only to your own team's addresses. That's fine for testing, but customers
-won't get their codes on a live store. Connect **Resend** (free: 3,000
-emails/month, 100/day) before going live. You already have a Resend account
-and API key.
+won't get their codes on a live store. Before going live, send the codes
+through **Gmail** instead. It's free, needs no domain, and allows about **500
+emails per day**, plenty for a growing store.
 
-**Step A: verify your domain in Resend** (needed to email customers)
+> **Tip:** create a separate Gmail account for the store (for example
+> `dreamneedles.store@gmail.com`) instead of using your personal one.
+> Customers see this address as the sender, and replies land there.
 
-1. You need a domain you own (for example `dreamneedles.in`), bought from
-   GoDaddy, Hostinger, Namecheap or similar.
-2. Resend → **Domains** → **Add Domain** → enter your domain → Region
-   **Tokyo (ap-northeast-1)**, the closest to India.
-3. Resend shows 3–4 DNS records (TXT/MX). Log in to where you bought the
-   domain → **DNS settings** → add each record exactly as shown.
-4. Back in Resend click **Verify**. It can take from a few minutes to a few
-   hours. Wait until the status is **Verified**.
+**Step A: create a Gmail App Password**
 
-> Until the domain is verified, Resend only delivers to the email address
-> you signed up to Resend with. Good for testing, not for customers.
+Supabase can't use your normal Gmail password. It needs an **App Password**,
+a separate 16-letter password that only works for sending email.
 
-**Step B: plug Resend into Supabase**
+1. Sign in to the store's Gmail account and open
+   <https://myaccount.google.com/security>.
+2. Under **How you sign in to Google**, turn on **2-Step Verification**
+   (Google requires it for App Passwords) and follow the steps.
+3. Open <https://myaccount.google.com/apppasswords>.
+4. **App name:** `Dream Needles` → **Create**.
+5. Google shows a 16-letter password such as `abcd efgh ijkl mnop`. Copy it
+   **without the spaces** (`abcdefghijklmnop`) and keep it somewhere safe.
+   Google shows it only once.
 
-1. Resend → **API Keys** → **Create API Key** → name `supabase-auth`,
-   permission **Sending access** → copy the key (starts with `re_`).
-2. Supabase → **Authentication** → **Emails** → **SMTP Settings** → turn on
+> If you ever change the Gmail account's normal password, Google deletes all
+> App Passwords. Just create a new one and update it in Supabase, `.env.local`
+> and Vercel.
+
+**Step B: plug Gmail into Supabase**
+
+1. Supabase → **Authentication** → **Emails** → **SMTP Settings** → turn on
    **Enable Custom SMTP** and fill in:
 
-   | Field        | Value                                                       |
-   | ------------ | ----------------------------------------------------------- |
-   | Sender email | `login@yourdomain.in` (any address at your verified domain) |
-   | Sender name  | `Dream Needles`                                             |
-   | Host         | `smtp.resend.com`                                           |
-   | Port         | `465`                                                       |
-   | Username     | `resend`                                                    |
-   | Password     | the `re_…` API key from step 1                              |
+   | Field        | Value                                                               |
+   | ------------ | ------------------------------------------------------------------- |
+   | Sender email | the store's full Gmail address, e.g. `dreamneedles.store@gmail.com` |
+   | Sender name  | `Dream Needles`                                                     |
+   | Host         | `smtp.gmail.com`                                                    |
+   | Port         | `465`                                                               |
+   | Username     | the same full Gmail address                                         |
+   | Password     | the 16-letter App Password (no spaces)                              |
 
-3. Click **Save**.
-4. Supabase → **Authentication** → **Rate Limits** → raise **Rate limit for
+2. Click **Save**.
+3. Supabase → **Authentication** → **Rate Limits** → set **Rate limit for
    sending emails** to `100` per hour, then save.
+4. Test it: run the site (Part 6), go to <http://localhost:3000/login> once
+   it exists, and sign in with an email address that isn't on your Supabase
+   team. The code should arrive within a minute. Check the spam folder the
+   first time and mark it **Not spam**.
 
-**Alternative: Brevo** (free: 300 emails/day). Brevo → **SMTP & API** →
-**SMTP** tab. Use host `smtp-relay.brevo.com`, port `587`, the **Login**
-shown there as username, and an **SMTP key** you generate as password.
-Verify your sender domain under **Senders, Domains & Dedicated IPs**.
+> The **Sender email** must be the same Gmail address as the **Username**.
+> Gmail rewrites any other "from" address.
 
 ### 2.5 Order emails (sent by the website)
 
-The website also sends order confirmation, "shipped" and
-"delivered/cancelled" emails through Resend, using the two lines already in
-your `.env.local`:
+The website sends order **confirmation**, **shipped** (with tracking) and
+**delivered / cancelled** emails through the same Gmail account. Put these
+lines in `.env.local`. Your `.env.local` still has `RESEND_API_KEY` and an
+`EMAIL_FROM` from earlier, so **delete the `RESEND_API_KEY` line** and replace
+`EMAIL_FROM`:
 
 ```bash
-RESEND_API_KEY=re_...         # can be the same key as above, or a separate one
-EMAIL_FROM=Dream Needles <orders@yourdomain.in>
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=465
+SMTP_USER=dreamneedles.store@gmail.com           # the store's full Gmail address
+SMTP_PASS=abcdefghijklmnop                       # the App Password from 2.4, no spaces
+EMAIL_FROM=Dream Needles <dreamneedles.store@gmail.com>   # same Gmail address
 ```
 
-While your domain isn't verified yet, keep
-`EMAIL_FROM=Dream Needles <onboarding@resend.dev>`. Test orders will then only
-email the address you used to sign up to Resend.
+Check it works:
+
+```bash
+npm run email:test
+```
+
+You should see `Sent to … via smtp.gmail.com`, and a "Dream Needles test
+email" arrives in that Gmail inbox. To send the test somewhere else, run
+`npm run email:test -- someone@example.com`.
+
+> **If email isn't set up, orders still work.** When these values are empty
+> or wrong, checkout completes normally and the site just skips the email
+> (and logs a warning). Fix the settings at any time; no code changes are
+> needed.
+
+### 2.6 Optional, later: switch to Resend if you buy a domain
+
+Gmail is fine to start. If you later buy a domain (for example
+`dreamneedles.in`), you can send from `orders@dreamneedles.in` through
+**Resend** (free: 3,000 emails/month, 100/day). Switching only means
+changing settings; no code changes.
+
+1. **Verify the domain:** Resend → **Domains** → **Add Domain** → enter your
+   domain → Region **Tokyo (ap-northeast-1)**, the closest to India. Add the
+   3–4 DNS records Resend shows at your domain registrar (GoDaddy, Hostinger,
+   Namecheap…) → click **Verify** and wait for **Verified**.
+2. **Create a key:** Resend → **API Keys** → **Create API Key** →
+   permission **Sending access** → copy it (starts with `re_`).
+3. **Login codes:** in Supabase **SMTP Settings** (2.4 Step B) change to:
+   Sender email `login@yourdomain.in`, Host `smtp.resend.com`, Port `465`,
+   Username `resend`, Password the `re_…` key.
+4. **Order emails:** in `.env.local` **and** in Vercel (Part 7) change to:
+
+   ```bash
+   SMTP_HOST=smtp.resend.com
+   SMTP_PORT=465
+   SMTP_USER=resend
+   SMTP_PASS=re_...
+   EMAIL_FROM=Dream Needles <orders@yourdomain.in>
+   ```
+
+5. Run `npm run email:test`, then redeploy on Vercel.
+
+**Brevo** works the same way (free: 300 emails/day): host
+`smtp-relay.brevo.com`, port `587`, the **Login** shown under **SMTP & API →
+SMTP** as the username, and an **SMTP key** as the password.
 
 ---
 
@@ -384,8 +441,14 @@ _Best done once checkout works, but you can deploy any time to see progress._
    | `RAZORPAY_WEBHOOK_SECRET`       | from Part 4.3                                                                |
    | `GOOGLE_SHEETS_WEBHOOK_URL`     | same as `.env.local`                                                         |
    | `GOOGLE_SHEETS_SECRET`          | same as `.env.local`                                                         |
-   | `RESEND_API_KEY`                | same as `.env.local`                                                         |
-   | `EMAIL_FROM`                    | same as `.env.local`                                                         |
+   | `SMTP_HOST`                     | `smtp.gmail.com` (from Part 2.5)                                             |
+   | `SMTP_PORT`                     | `465`                                                                        |
+   | `SMTP_USER`                     | the store's Gmail address                                                    |
+   | `SMTP_PASS`                     | the Gmail App Password                                                       |
+   | `EMAIL_FROM`                    | `Dream Needles <the same Gmail address>`                                     |
+
+   The five email lines are optional: without them the site works and just
+   skips order emails.
 
    Tip: you can paste the whole `.env.local` contents into the first **Key**
    box and Vercel splits it into rows; then delete the `FIGMA_TOKEN` row.
