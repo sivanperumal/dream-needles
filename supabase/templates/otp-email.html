@@ -1,0 +1,19 @@
+<!--
+  Paste into Supabase → Authentication → Emails → Templates, in BOTH:
+    • "Magic Link"      (used when an existing customer signs in)
+    • "Confirm signup"  (used the first time a new customer signs in)
+  Subject for both:  Your Dream Needles login code: {{ .Token }}
+-->
+<div style="margin:0;padding:32px 16px;background:#f8ebf9;font-family:Arial,Helvetica,sans-serif;color:#374151;">
+  <div style="max-width:480px;margin:0 auto;background:#ffffff;border-radius:16px;padding:32px;text-align:center;">
+    <h1 style="margin:0 0 8px;font-size:22px;color:#4d0851;">Dream Needles</h1>
+    <p style="margin:0 0 24px;font-size:15px;">Use this code to sign in. It expires in 10 minutes.</p>
+    <p style="margin:0 0 24px;font-size:34px;font-weight:bold;letter-spacing:10px;color:#4d0851;">{{ .Token }}</p>
+    <p style="margin:0;font-size:13px;color:#6b7280;">
+      If you didn't try to sign in, you can safely ignore this email.
+    </p>
+  </div>
+  <p style="max-width:480px;margin:16px auto 0;font-size:12px;color:#6b7280;text-align:center;">
+    Handmade with love · Dream Needles
+  </p>
+</div>

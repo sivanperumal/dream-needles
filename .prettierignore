@@ -3,3 +3,4 @@ node_modules
 images
 supabase/seed
 package-lock.json
+supabase/templates

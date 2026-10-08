@@ -35,6 +35,8 @@ const serverSchema = z.object({
   RAZORPAY_WEBHOOK_SECRET: z.string().optional(),
   GOOGLE_SHEETS_WEBHOOK_URL: z.url().optional(),
   GOOGLE_SHEETS_SECRET: z.string().optional(),
+  RESEND_API_KEY: z.string().optional(),
+  EMAIL_FROM: z.string().optional(),
 });
 
 export type ServerEnv = z.infer<typeof serverSchema>;
@@ -51,6 +53,8 @@ export function serverEnv(): ServerEnv {
     GOOGLE_SHEETS_WEBHOOK_URL:
       process.env.GOOGLE_SHEETS_WEBHOOK_URL || undefined,
     GOOGLE_SHEETS_SECRET: process.env.GOOGLE_SHEETS_SECRET || undefined,
+    RESEND_API_KEY: process.env.RESEND_API_KEY || undefined,
+    EMAIL_FROM: process.env.EMAIL_FROM || undefined,
   });
 }
 
