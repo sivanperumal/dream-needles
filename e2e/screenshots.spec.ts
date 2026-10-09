@@ -22,6 +22,7 @@ const PAGES: {
   { name: "policy", path: "/shipping-policy" },
   { name: "not-found", path: "/nope-not-here" },
   { name: "login", path: "/login" },
+  { name: "checkout-guest", path: "/checkout", seed: true },
   { name: "verify", path: "/login/verify?email=maker%40example.com" },
   { name: "cart", path: "/cart", seed: true },
   {

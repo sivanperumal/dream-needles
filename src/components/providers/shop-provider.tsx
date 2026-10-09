@@ -47,6 +47,7 @@ type ShopState = {
   removeFromCart: (productId: string, variantId: string | null) => void;
   clearCart: () => void;
   reloadCart: () => Promise<void>;
+  syncSession: () => Promise<void>;
   isWishlisted: (productId: string) => boolean;
   toggleWishlist: (productId: string, name?: string) => void;
   markViewed: (productId: string) => void;
@@ -118,6 +119,48 @@ async function saveLine(
   });
 }
 
+/** Merges the guest (localStorage) cart and wishlist into the account, then returns the account state. */
+async function mergeGuestIntoAccount(client: Supabase, userId: string) {
+  const guestCart = readLocal<CartLine[]>(STORAGE_KEYS.cart, []);
+  const guestWishlist = readLocal<string[]>(STORAGE_KEYS.wishlist, []);
+  let account = await loadAccount(client);
+  if (guestCart.length || guestWishlist.length) {
+    await Promise.all([
+      ...guestCart.map((line) => {
+        const existing = account.cart.find((l) =>
+          sameLine(l, line.productId, line.variantId),
+        );
+        const quantity = Math.min(
+          MAX_QTY,
+          (existing?.quantity ?? 0) + line.quantity,
+        );
+        return saveLine(
+          client,
+          userId,
+          { ...line, quantity },
+          Boolean(existing),
+        );
+      }),
+      guestWishlist.length
+        ? client.from("wishlist_items").upsert(
+            guestWishlist.map((product_id) => ({
+              user_id: userId,
+              product_id,
+            })),
+            {
+              onConflict: "user_id,product_id",
+              ignoreDuplicates: true,
+            },
+          )
+        : Promise.resolve(),
+    ]);
+    writeLocal(STORAGE_KEYS.cart, []);
+    writeLocal(STORAGE_KEYS.wishlist, []);
+    account = await loadAccount(client);
+  }
+  return account;
+}
+
 export function ShopProvider({ children }: { children: ReactNode }) {
   const { setCounts, open } = useUI();
   const [ready, setReady] = useState(false);
@@ -177,44 +220,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
 
       // Defer DB calls out of the auth callback (Supabase recommends this).
       setTimeout(async () => {
-        const guestCart = readLocal<CartLine[]>(STORAGE_KEYS.cart, []);
-        const guestWishlist = readLocal<string[]>(STORAGE_KEYS.wishlist, []);
-        let account = await loadAccount(client);
-
-        if (guestCart.length || guestWishlist.length) {
-          await Promise.all([
-            ...guestCart.map((line) => {
-              const existing = account.cart.find((l) =>
-                sameLine(l, line.productId, line.variantId),
-              );
-              const quantity = Math.min(
-                MAX_QTY,
-                (existing?.quantity ?? 0) + line.quantity,
-              );
-              return saveLine(
-                client,
-                nextUser.id,
-                { ...line, quantity },
-                Boolean(existing),
-              );
-            }),
-            guestWishlist.length
-              ? client.from("wishlist_items").upsert(
-                  guestWishlist.map((product_id) => ({
-                    user_id: nextUser.id,
-                    product_id,
-                  })),
-                  {
-                    onConflict: "user_id,product_id",
-                    ignoreDuplicates: true,
-                  },
-                )
-              : Promise.resolve(),
-          ]);
-          writeLocal(STORAGE_KEYS.cart, []);
-          writeLocal(STORAGE_KEYS.wishlist, []);
-          account = await loadAccount(client);
-        }
+        const account = await mergeGuestIntoAccount(client, nextUser.id);
         setCart(account.cart);
         setWishlist(account.wishlist);
         setReady(true);
@@ -308,6 +314,27 @@ export function ShopProvider({ children }: { children: ReactNode }) {
         .then(reportError);
   }, [reportError]);
 
+  /**
+   * Picks up a session that was created on the server (e.g. signing in on the
+   * checkout page) without a page reload, merging the guest cart first.
+   */
+  const syncSession = useCallback(async () => {
+    if (!isSupabaseConfigured()) return;
+    const client = supabase();
+    const {
+      data: { session },
+    } = await client.auth.getSession();
+    const sessionUser = session?.user;
+    if (!sessionUser || sessionUser.id === userRef.current?.id) return;
+    const nextUser = { id: sessionUser.id, email: sessionUser.email ?? null };
+    userRef.current = nextUser;
+    setUser(nextUser);
+    const account = await mergeGuestIntoAccount(client, nextUser.id);
+    setCart(account.cart);
+    setWishlist(account.wishlist);
+    setReady(true);
+  }, []);
+
   const reloadCart = useCallback(async () => {
     if (!userRef.current) return;
     const account = await loadAccount(supabase());
@@ -361,6 +388,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       removeFromCart,
       clearCart,
       reloadCart,
+      syncSession,
       isWishlisted,
       toggleWishlist,
       markViewed,
@@ -376,6 +404,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       removeFromCart,
       clearCart,
       reloadCart,
+      syncSession,
       isWishlisted,
       toggleWishlist,
       markViewed,

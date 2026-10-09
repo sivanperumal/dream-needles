@@ -120,6 +120,22 @@ describe("sendEmail", () => {
     );
   });
 
+  it("never emails reserved test domains", async () => {
+    configure();
+    const { sendEmail } = await import("@/lib/email/mailer");
+    const result = await sendEmail({
+      to: "e2e-1@dreamneedles.test",
+      subject: "s",
+      html: "h",
+      text: "t",
+    });
+    expect(result).toEqual({
+      status: "skipped",
+      reason: "reserved test domain",
+    });
+    expect(sendMail).not.toHaveBeenCalled();
+  });
+
   it("uses STARTTLS on port 587 (e.g. Brevo)", async () => {
     configure();
     vi.stubEnv("SMTP_PORT", "587");
