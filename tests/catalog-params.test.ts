@@ -90,3 +90,14 @@ describe("FAQ markdown", () => {
     ]);
   });
 });
+
+describe("safeNext", () => {
+  it("allows only same-site relative paths", async () => {
+    const { safeNext } = await import("@/lib/safe-redirect");
+    expect(safeNext("/account/orders?x=1")).toBe("/account/orders?x=1");
+    expect(safeNext("//evil.com")).toBe("/account");
+    expect(safeNext("https://evil.com")).toBe("/account");
+    expect(safeNext("/\\evil.com")).toBe("/account");
+    expect(safeNext(null, "/")).toBe("/");
+  });
+});
