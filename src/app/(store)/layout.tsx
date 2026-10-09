@@ -18,6 +18,7 @@ import { Toaster } from "sonner";
 import { QuickViewProvider } from "@/components/catalog/quick-view";
 import { ShopProvider } from "@/components/providers/shop-provider";
 import { UIProvider } from "@/components/providers/ui-provider";
+import { SearchOverlay } from "@/components/search/search-overlay";
 import { getNavigation, getStoreSettings } from "@/lib/queries/catalog";
 
 /** Storefront shell: top bar, sticky header, page, footer and overlays. */
@@ -60,6 +61,7 @@ export default async function StoreLayout({ children }: LayoutProps<"/">) {
             <MobileBottomNavWithPath />
           </Suspense>
           <FloatingActions whatsappUrl={whatsappUrl} />
+          <SearchOverlay />
           <Toaster
             position="top-center"
             richColors

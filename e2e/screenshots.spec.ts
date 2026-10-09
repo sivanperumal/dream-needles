@@ -4,9 +4,11 @@ import { test } from "@playwright/test";
 const PAGES: {
   name: string;
   path: string;
-  action?: "mega-menu" | "mobile-menu";
+  action?: "mega-menu" | "mobile-menu" | "search";
 }[] = [
   { name: "home", path: "/" },
+  { name: "search-popup", path: "/", action: "search" },
+  { name: "search-page", path: "/search?q=keychain" },
   { name: "collection", path: "/collections/handmade" },
   { name: "collection-empty", path: "/collections/rakhis" },
   {
@@ -30,6 +32,19 @@ for (const page of PAGES.filter((p) => !only || only.includes(p.name))) {
     if (page.action === "mega-menu") {
       if (testInfo.project.name !== "desktop") test.skip();
       await browser.getByRole("button", { name: "Tools", exact: true }).click();
+    }
+    if (page.action === "search") {
+      const mobile = testInfo.project.name === "mobile";
+      await (
+        mobile
+          ? browser
+              .getByRole("navigation", { name: "Quick links" })
+              .getByRole("button", { name: "Search" })
+          : browser.getByRole("button", { name: "Search", exact: true })
+      ).click();
+      await browser.getByRole("combobox").fill("keychain");
+      await browser.getByRole("option").first().waitFor();
+      await browser.waitForTimeout(500);
     }
     if (page.action === "mobile-menu") {
       if (testInfo.project.name === "desktop") test.skip();
