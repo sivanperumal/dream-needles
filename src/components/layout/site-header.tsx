@@ -22,9 +22,14 @@ import { cn } from "@/lib/utils";
  * Sticky main header (Figma 45:1303 desktop, 43:782 tablet, 42:347 mobile).
  * Menus come from the database, so new collections appear without code changes.
  */
-export function SiteHeader({ menu }: { menu: MenuNode[] }) {
+export function SiteHeader({
+  menu,
+  pathname,
+}: {
+  menu: MenuNode[];
+  pathname: string | null;
+}) {
   const { open, cartCount, wishlistCount } = useUI();
-  const pathname = usePathname();
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const headerRef = useRef<HTMLElement>(null);
@@ -191,6 +196,11 @@ export function SiteHeader({ menu }: { menu: MenuNode[] }) {
       )}
     </header>
   );
+}
+
+/** Reads the URL for active-link styling; render inside <Suspense> (fallback: SiteHeader with pathname null). */
+export function SiteHeaderWithPath({ menu }: { menu: MenuNode[] }) {
+  return <SiteHeader menu={menu} pathname={usePathname()} />;
 }
 
 function HeaderIcon({

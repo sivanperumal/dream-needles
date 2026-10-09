@@ -17,10 +17,10 @@ set
     {"value": "28K+", "label": "Pincodes we deliver to"}
   ]'::jsonb,
   marketplaces = '[
-    {"name": "Amazon", "url": "", "logo_path": null},
-    {"name": "Flipkart", "url": "", "logo_path": null},
-    {"name": "Myntra", "url": "", "logo_path": null},
-    {"name": "Pepperfry", "url": "", "logo_path": null}
+    {"name": "Amazon", "url": "", "logo_path": "/images/home/marketplace-amazon.png"},
+    {"name": "Flipkart", "url": "", "logo_path": "/images/home/marketplace-flipkart.png"},
+    {"name": "Myntra", "url": "", "logo_path": "/images/home/marketplace-myntra.png"},
+    {"name": "Pepperfry", "url": "", "logo_path": "/images/home/marketplace-pepperfry.png"}
   ]'::jsonb,
   social_links = '{"facebook": "", "instagram": "", "youtube": "", "whatsapp": ""}'::jsonb,
   contact_email = 'care@dreamneedles.in',
@@ -48,7 +48,7 @@ values
   ('6f1d2b8e-0a51-5c3a-9e0f-1a2b3c4d5e22', 'category', 'Accessories', 'Bags, hair accessories and rakhis', 'Shop Now',
     '/images/home/category-accessories.jpg', '/collections/handmade-accessories', 1),
   ('6f1d2b8e-0a51-5c3a-9e0f-1a2b3c4d5e23', 'category', 'Apparel', 'Handmade wear, made to last', 'Shop Now',
-    '/images/home/homepage-sweaters-and-cardigans.png', '/collections/apparel', 2),
+    '/images/home/category-apparel.jpg', '/collections/apparel', 2),
   ('6f1d2b8e-0a51-5c3a-9e0f-1a2b3c4d5e24', 'category', 'Tools', 'Everything you need to start', 'Shop Now',
     '/images/home/category-tools.jpg', '/collections/tools', 3)
 on conflict (id) do nothing;
@@ -56,21 +56,9 @@ on conflict (id) do nothing;
 insert into public.pages (slug, title, seo_description, body_markdown)
 values
 ('our-story', 'Our Story', 'How Dream Needles began, and the makers behind every stitch.', $md$
-Dream Needles began with a single crochet hook and a love for making things by hand.
+Founded in 2018, Dream Needles is dedicated to bringing together premium yarns, handmade accessories, and thoughtfully crafted tools for makers of all kinds. What began as an intimate passion circle sharing handmade wool creations quickly revealed a yearning across India: crafters sought pure natural fibers, authentic tools, and a reliable sanctuary where timeless textile artistry could thrive.
 
-## Handmade, one stitch at a time
-
-Every flower, keychain, blanket and toy in our Handmade collection is crocheted by our makers. No two pieces are exactly alike, and we think that's the point.
-
-## Tools for every maker
-
-We stock the hooks, needles and notions we use ourselves, so you can start your own projects with tools you can trust.
-
-## Visit us
-
-Come and see the yarn in person at our retail store. You'll find our address on the [Retail Store](/retail-store) page.
-
-*[to confirm] Replace this placeholder story with your own.*
+At Dream Needles, we believe that making something with your hands shows care, patience, and love. That belief shapes everything we do, from the yarns we develop to the vibrant artisan communities we nurture.
 $md$),
 ('faq', 'Frequently Asked Questions', 'Answers about orders, shipping, returns and our handmade products.', $md$
 ## How long will my order take to arrive?

@@ -248,3 +248,33 @@ export async function getPage(slug: string) {
   if (error) fail(`Loading page ${slug}`, error);
   return data;
 }
+
+/** Active product slugs, for prerendering product pages at build time. */
+export async function getAllProductSlugs() {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(CACHE_TAGS.catalog);
+
+  if (!isSupabaseConfigured()) return [];
+  const { data, error } = await createPublicClient()
+    .from("products")
+    .select("slug")
+    .order("created_at", { ascending: false });
+  if (error) fail("Loading product slugs", error);
+  return data.map((p) => p.slug);
+}
+
+export async function getReviews(productId: string) {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(CACHE_TAGS.catalog, CACHE_TAGS.reviews(productId));
+
+  const { data, error } = await createPublicClient()
+    .from("reviews")
+    .select("id, rating, title, body, author_name, created_at")
+    .eq("product_id", productId)
+    .order("created_at", { ascending: false })
+    .limit(50);
+  if (error) fail("Loading reviews", error);
+  return data;
+}

@@ -10,4 +10,5 @@ export const CACHE_TAGS = {
   product: (slug: string) => `product:${slug}`,
   collection: (slug: string) => `collection:${slug}`,
   page: (slug: string) => `page:${slug}`,
+  reviews: (productId: string) => `reviews:${productId}`,
 } as const;

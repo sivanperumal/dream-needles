@@ -7,6 +7,17 @@ const PAGES: {
   action?: "mega-menu" | "mobile-menu";
 }[] = [
   { name: "home", path: "/" },
+  { name: "collection", path: "/collections/handmade" },
+  { name: "collection-empty", path: "/collections/rakhis" },
+  {
+    name: "product",
+    path: "/products/handmade-amigurumi-crochet-penguin-keychain-sea-blue",
+  },
+  { name: "retail-store", path: "/retail-store" },
+  { name: "our-story", path: "/our-story" },
+  { name: "faq", path: "/faq" },
+  { name: "policy", path: "/shipping-policy" },
+  { name: "not-found", path: "/nope-not-here" },
   { name: "mega-menu-tools", path: "/", action: "mega-menu" },
   { name: "mobile-menu", path: "/", action: "mobile-menu" },
 ];
