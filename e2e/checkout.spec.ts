@@ -40,14 +40,12 @@ test.beforeAll(async () => {
     .eq("slug", SLUG)
     .single();
   product = data!;
-  await admin!
-    .from("coupons")
-    .insert({
-      code: COUPON,
-      discount_type: "percent",
-      value: 10,
-      description: "e2e",
-    });
+  await admin!.from("coupons").insert({
+    code: COUPON,
+    discount_type: "percent",
+    value: 10,
+    description: "e2e",
+  });
 });
 
 test.afterAll(async () => {
