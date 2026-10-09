@@ -19,6 +19,7 @@ const PAGES: {
   { name: "retail-store", path: "/retail-store" },
   { name: "our-story", path: "/our-story" },
   { name: "faq", path: "/faq" },
+  { name: "contact", path: "/contact" },
   { name: "policy", path: "/shipping-policy" },
   { name: "not-found", path: "/nope-not-here" },
   { name: "login", path: "/login" },

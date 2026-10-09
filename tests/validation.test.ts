@@ -68,3 +68,32 @@ describe("profileSchema", () => {
     });
   });
 });
+
+describe("contactSchema", async () => {
+  const { contactSchema } = await import("@/lib/validation/contact");
+  const valid = {
+    name: "Asha",
+    email: " Asha@Example.com ",
+    subject: "Custom order",
+    message: "Can you make a blue elephant?",
+  };
+
+  it("accepts and normalises a message", () => {
+    expect(contactSchema.parse(valid)).toMatchObject({
+      email: "asha@example.com",
+      phone: null,
+    });
+  });
+
+  it("rejects short messages, unknown topics and a filled honeypot", () => {
+    expect(contactSchema.safeParse({ ...valid, message: "hi" }).success).toBe(
+      false,
+    );
+    expect(contactSchema.safeParse({ ...valid, subject: "Spam" }).success).toBe(
+      false,
+    );
+    expect(
+      contactSchema.safeParse({ ...valid, website: "http://spam" }).success,
+    ).toBe(false);
+  });
+});

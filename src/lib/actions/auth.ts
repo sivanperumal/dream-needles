@@ -5,11 +5,13 @@ import { z } from "zod";
 import { safeNext } from "@/lib/safe-redirect";
 import { createClient } from "@/lib/supabase/server";
 
+// Trim before validating: z.email() checks the raw string otherwise.
 const emailSchema = z
-  .email("Please enter a valid email address.")
+  .string()
   .trim()
   .toLowerCase()
-  .max(200);
+  .max(200)
+  .pipe(z.email("Please enter a valid email address."));
 const codeSchema = z
   .string()
   .regex(/^\d{6}$/, "Enter the 6-digit code from your email.");
