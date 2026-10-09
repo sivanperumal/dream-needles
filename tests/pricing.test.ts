@@ -93,3 +93,18 @@ describe("couponDiscount", () => {
     ).toBe(300);
   });
 });
+
+describe("order status transitions", async () => {
+  const { canTransition } = await import("@/lib/order-status");
+  it("follows pending → paid → shipped → delivered", () => {
+    expect(canTransition("pending", "paid")).toBe(true);
+    expect(canTransition("paid", "shipped")).toBe(true);
+    expect(canTransition("shipped", "delivered")).toBe(true);
+  });
+  it("blocks skipping back or changing finished orders", () => {
+    expect(canTransition("delivered", "shipped")).toBe(false);
+    expect(canTransition("shipped", "paid")).toBe(false);
+    expect(canTransition("cancelled", "paid")).toBe(false);
+    expect(canTransition("delivered", "cancelled")).toBe(false);
+  });
+});

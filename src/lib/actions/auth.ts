@@ -58,13 +58,24 @@ export async function verifyLoginCode(
   if (!code.success) return { error: code.error.issues[0].message };
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.verifyOtp({
+  const { data, error } = await supabase.auth.verifyOtp({
     email: email.data,
     token: code.data,
     type: "email",
   });
   if (error) return { error: friendlyAuthError(error.message) };
-  redirect(safeNext(formData.get("next")));
+
+  // Only send admins to admin pages (a redirect from here skips the proxy check).
+  let next = safeNext(formData.get("next"));
+  if (next === "/admin" || next.startsWith("/admin/")) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", data.user!.id)
+      .single();
+    if (profile?.role !== "admin") next = "/";
+  }
+  redirect(next);
 }
 
 export async function signOut() {

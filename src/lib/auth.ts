@@ -1,5 +1,6 @@
 import "server-only";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 
@@ -8,6 +9,8 @@ import { createClient } from "@/lib/supabase/server";
  * Reads cookies, so callers must render inside <Suspense>.
  */
 export const getCurrentUser = cache(async () => {
+  // Request-time only: Supabase Auth reads the clock (token expiry).
+  await connection();
   const supabase = await createClient();
   const {
     data: { user },

@@ -1,6 +1,5 @@
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
-import { cn } from "@/lib/utils";
 
 /** Renders admin-edited Markdown (pages table) with the site's typography. Raw HTML is not allowed. */
 export function Prose({
@@ -10,17 +9,26 @@ export function Prose({
   markdown: string;
   className?: string;
 }) {
+  // Default size unless the caller sets one (no class merging; see below).
+  const size = /(^|\s)(md:)?text-(xs|sm|base|lg|xl)\b/.test(className ?? "")
+    ? ""
+    : "text-[15px] leading-7";
   return (
     <div
-      className={cn(
-        "max-w-none text-[15px] leading-7 text-gray-700",
+      // Plain join (not tailwind-merge): merging these arbitrary-variant classes
+      // gave different results on server and client (hydration mismatch).
+      className={[
+        "max-w-none text-gray-700",
+        size,
         "[&_h2]:mt-8 [&_h2]:mb-3 [&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-[#210023] first:[&_h2]:mt-0",
         "[&_h3]:mt-6 [&_h3]:mb-2 [&_h3]:font-semibold [&_h3]:text-gray-900",
         "[&_li]:mb-1 [&_ol]:mb-4 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-4 [&_ul]:mb-4 [&_ul]:list-disc [&_ul]:pl-5",
         "[&_em]:text-gray-500 [&_strong]:font-semibold [&_strong]:text-gray-900",
         "[&_a]:font-medium [&_a]:text-brand [&_a]:underline-offset-2 hover:[&_a]:underline",
         className,
-      )}
+      ]
+        .filter(Boolean)
+        .join(" ")}
     >
       <ReactMarkdown
         components={{

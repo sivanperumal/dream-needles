@@ -97,3 +97,17 @@ describe("contactSchema", async () => {
     ).toBe(false);
   });
 });
+
+describe("slugify", async () => {
+  const { slugify } = await import("@/lib/slug");
+  it("makes URL-safe slugs", () => {
+    expect(slugify("Tiny Owl Keychain – Lilac!")).toBe(
+      "tiny-owl-keychain-lilac",
+    );
+    expect(slugify("Stitch Markers & Holders")).toBe(
+      "stitch-markers-and-holders",
+    );
+    expect(slugify("  Crème Brûlée Yarn ")).toBe("creme-brulee-yarn");
+    expect(slugify("---")).toBe("");
+  });
+});
