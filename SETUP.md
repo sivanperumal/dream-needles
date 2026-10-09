@@ -3,8 +3,8 @@
 Step-by-step instructions for everything you need to do yourself. No prior
 Supabase experience needed. Do the parts in order.
 
-> **Status:** Part 1 is done ✅. Parts marked 🕒 depend on features that are
-> still being built; you'll be told when each one is ready to do.
+> **Status:** All features are built. Part 1 is done ✅. Work through the
+> remaining parts in order; nothing in the code needs changing for any of them.
 
 ---
 
@@ -273,9 +273,7 @@ SMTP** as the username, and an **SMTP key** as the password.
 
 ---
 
-## Part 3 · Make yourself an admin 🕒
-
-_Ready once the login page is built. You'll be told._
+## Part 3 · Make yourself an admin
 
 1. Run the site (Part 6) and sign in at <http://localhost:3000/login> with
    your own email. This creates your customer profile.
@@ -310,9 +308,7 @@ Your Razorpay **test** keys are already in `.env.local` ✅.
 2. **Account & Settings** → **Payment Capture** → set to **Automatic
    capture** (so successful payments don't need manual capturing).
 
-### 4.2 Test payments 🕒
-
-_Ready once checkout is built._
+### 4.2 Test payments
 
 In test mode no real money moves. At the Razorpay payment window use:
 
@@ -322,7 +318,7 @@ In test mode no real money moves. At the Razorpay payment window use:
   [Test Card Details](https://razorpay.com/docs/payments/payments/test-card-details/)
   page. Any future expiry date and any CVV work.
 
-### 4.3 Webhook 🕒
+### 4.3 Webhook
 
 _Do this after deploying (Part 7). Razorpay can't reach `localhost`._
 
@@ -418,9 +414,9 @@ Useful commands:
 
 ---
 
-## Part 7 · Deploy to Vercel 🕒
+## Part 7 · Deploy to Vercel
 
-_Best done once checkout works, but you can deploy any time to see progress._
+_You already deployed to <https://dream-needles.vercel.app>. Use this part to check your Vercel settings match, especially the environment variables added since (email, Google Sheets, Razorpay webhook)._
 
 ### 7.1 Create the Vercel project
 
@@ -473,10 +469,9 @@ Every push to `main` on GitHub now redeploys automatically.
 
 ---
 
-## Part 8 · End-to-end test checklist 🕒
+## Part 8 · End-to-end test checklist
 
-_This list is used for the final check when everything is built._ Tick each
-item on the live site (Razorpay in test mode).
+Tick each item on the live site (Razorpay in test mode).
 
 **Storefront**
 
@@ -525,3 +520,37 @@ item on the live site (Razorpay in test mode).
 - [ ] Collections: create a sub-collection; it appears in the header menu without code changes
 - [ ] Orders: change status paid → shipped (customer gets the "shipped" email) → delivered
 - [ ] Coupons, reviews (hide), home page content, navigation, pages and settings save and show on the site
+
+---
+
+## Part 9 · Automated tests (optional, for developers)
+
+The project has two kinds of automated tests:
+
+| Command         | What it checks                                                                                                                              | Needs                                         |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| `npm run check` | Lint, types and 99 unit/database tests: pricing, coupons, Razorpay signatures, search (including typos), security rules, What's New, emails | Nothing (runs offline)                        |
+| `npm run e2e`   | Real browser tests: search, sign-in, cart merge, Razorpay test checkout + webhook, contact form + Google Sheet, admin panel                 | `npm run dev` running, `.env.local` filled in |
+
+`npm run e2e` creates temporary test users, orders, coupons and products in
+your Supabase project and deletes them afterwards. Test emails use the
+reserved `.test` domain, so no real email is sent. The contact-form test adds
+one row to your Google Sheet (from `e2e-contact-…@dreamneedles.test`) that you
+can delete.
+
+Run e2e only against **test** Razorpay keys.
+
+---
+
+## Where things live
+
+| You want to change…                                                              | Go to               |
+| -------------------------------------------------------------------------------- | ------------------- |
+| Products, prices, stock, photos, colours                                         | Admin → Products    |
+| Menu structure / which collections show                                          | Admin → Collections |
+| Footer links                                                                     | Admin → Navigation  |
+| Home page slider, tiles, categories, stats, intro, marketplace links             | Admin → Home page   |
+| Our Story, FAQ, policies, terms text                                             | Admin → Pages       |
+| Shipping fee, free-shipping amount, GST, What's New days, WhatsApp, social links | Admin → Settings    |
+| Discount codes                                                                   | Admin → Coupons     |
+| Order status, tracking numbers                                                   | Admin → Orders      |
