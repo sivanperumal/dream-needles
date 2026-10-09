@@ -18,6 +18,18 @@ export const metadata: Metadata = {
   },
   description:
     "Crochet hooks, knitting tools and handmade crochet flowers, toys, blankets, bags and more. Shipped across India.",
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    siteName: "Dream Needles",
+    images: [
+      {
+        url: "/images/home/category-home-decor.jpg",
+        alt: "Handmade crochet by Dream Needles",
+      },
+    ],
+  },
+  twitter: { card: "summary_large_image" },
   icons: {
     icon: [
       { url: "/favicon.ico" },
