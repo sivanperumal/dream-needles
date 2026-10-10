@@ -185,3 +185,25 @@ describe("order email content", () => {
     );
   });
 });
+
+describe("contact notification email", () => {
+  it("goes to the support inbox with Reply-To set to the customer, escaped", async () => {
+    const { buildContactEmail } = await import("@/lib/email/contact-email");
+    const email = buildContactEmail(
+      {
+        name: "Asha <K>",
+        email: "asha@example.com",
+        phone: null,
+        subject: "Custom order",
+        message: "Blue <b>elephant</b> please",
+      },
+      "dreamneedles.store@gmail.com",
+    );
+    expect(email.to).toBe("dreamneedles.store@gmail.com");
+    expect(email.replyTo).toBe("Asha K <asha@example.com>");
+    expect(email.subject).toBe("Contact Us: Custom order (from Asha <K>)");
+    expect(email.html).toContain("Blue &lt;b&gt;elephant&lt;/b&gt; please");
+    expect(email.html).not.toContain("<b>elephant</b>");
+    expect(email.text).toContain("Topic: Custom order");
+  });
+});

@@ -48,12 +48,16 @@ function transporterFor(env: EmailEnv): Transporter {
 /** Reserved test domains (RFC 2606/6761) never receive real email. */
 const RESERVED_DOMAIN = /\.(test|example|invalid|localhost)$/i;
 
+/** True for addresses on reserved test domains (used by automated tests). */
+export const isReservedEmail = (email: string) =>
+  RESERVED_DOMAIN.test(email.split("@")[1] ?? "");
+
 export function isEmailConfigured(): boolean {
   return emailEnv() !== null;
 }
 
 export async function sendEmail(message: EmailMessage): Promise<SendResult> {
-  if (RESERVED_DOMAIN.test(message.to.split("@")[1] ?? "")) {
+  if (isReservedEmail(message.to)) {
     return { status: "skipped", reason: "reserved test domain" };
   }
   const env = emailEnv();

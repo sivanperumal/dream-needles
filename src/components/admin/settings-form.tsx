@@ -94,6 +94,7 @@ export function SettingsForm({
             type="email"
             defaultValue={settings.contact_email ?? ""}
             error={e.contact_email}
+            hint="Contact Us messages are emailed here. Also shown on the Contact and FAQ pages."
           />
           <TextField
             label="Phone"

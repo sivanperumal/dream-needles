@@ -475,48 +475,50 @@ Tick each item on the live site (Razorpay in test mode).
 
 **Storefront**
 
-- [ ] Home page: slider, tiles, categories, stats and footer all show; links work
-- [ ] Header menu: Tools and Handmade open the mega-menu; "View all" links work
-- [ ] Mobile: menu drawer, bottom tab bar and WhatsApp button work
-- [ ] Collection page: products show; filters (price, sub-collection, in stock) and sort change the list; pagination works
-- [ ] "View all" on Accessories / Home Decor shows each product once
-- [ ] What's New shows recent products with a "New" badge
-- [ ] Product card hover: Add to Cart, Wishlist and Quick View work
+- [✅] Home page: slider, tiles, categories, stats and footer all show; links work
+- [✅] Header menu: Tools and Handmade open the mega-menu; "View all" links work
+- [✅] Mobile: menu drawer, bottom tab bar and WhatsApp button work
+- [✅] Collection page: products show; filters (price, sub-collection, in stock) and sort change the list; pagination works
+- [✅] "View all" on Accessories / Home Decor shows each product once
+- [✅] What's New shows recent products with a "New" badge
+- [✅] Product card hover: Add to Cart, Wishlist and Quick View work
 - [ ] Product page: gallery, colour swatches (if any), quantity, stock status, pincode check, reviews, related products
-- [ ] Retail Store, Our Story, FAQ, Privacy, Shipping, Refund, Terms pages open
+- [✅] Retail Store, Our Story, FAQ, Privacy, Shipping, Refund, Terms pages open
 
 **Search**
 
-- [ ] Typing 2+ letters shows live results; "crochte" still finds crochet
-- [ ] Results show collections (with parent) and products (image, price, highlight)
-- [ ] Arrow keys + Enter open a result; Esc and clicking outside close it
-- [ ] Enter on the text opens `/search?q=…` with filters
-- [ ] Nonsense text shows "No results" with a What's New link; mobile opens full-screen
+- [✅] Typing 2+ letters shows live results; "crochte" still finds crochet
+- [✅] Results show collections (with parent) and products (image, price, highlight)
+- [✅] Arrow keys + Enter open a result; Esc and clicking outside close it
+- [✅] Enter on the text opens `/search?q=…` with filters
+- [✅] Nonsense text shows "No results" with a What's New link; mobile opens full-screen
 
 **Account, cart and wishlist**
 
-- [ ] Sign in with email → code arrives → code works; wrong code shows an error
-- [ ] Guest wishlist and cart items are kept after signing in
-- [ ] Cart drawer and cart page: change quantity, remove, free-shipping bar updates
-- [ ] Profile, addresses (add/edit/default) and order list work
+- [✅] Sign in with email → code arrives → code works; wrong code shows an error
+- [✅] Guest wishlist and cart items are kept after signing in
+- [✅] Cart drawer and cart page: change quantity, remove, free-shipping bar updates
+- [✅] Profile, addresses (add/edit/default) and order list work
 
 **Checkout and payments**
 
-- [ ] Checkout totals match the cart; a valid coupon applies, an invalid one is rejected
-- [ ] Pay with `success@razorpay` → success page → order shows as **Paid**, stock goes down, cart empties, confirmation email arrives
+- [✅] Checkout totals match the cart; a valid coupon applies, an invalid one is rejected
+- [✅] Pay with `success@razorpay` → success page → order shows as **Paid**, stock goes down, cart empties, confirmation email arrives
 - [ ] Pay with `failure@razorpay` → error message, order stays **Pending**, you can retry
-- [ ] Razorpay → Webhooks shows successful deliveries
+- [✅] Razorpay → Webhooks shows successful deliveries
 
 **Contact Us**
 
-- [ ] Submitting the form shows a success message
-- [ ] The message appears in the Google Sheet and in Admin → Contact submissions
+- [✅] Submitting the form shows a success message
+- [✅] The message appears in the Google Sheet and in Admin → Contact submissions
+- [ ] An email "Contact Us: … (from …)" arrives at the support email set in Admin → Settings; pressing Reply answers the customer
+- [ ] At checkout, a signed-out visitor sees "Back to Shopping"
 
 **Admin** (signed in as admin)
 
-- [ ] `/admin` is blocked for customers and signed-out visitors
-- [ ] Dashboard shows orders, revenue, recent orders and low stock
-- [ ] Products: search, create, edit, upload and reorder images, assign several collections, pin to What's New, hide/delete
+- [✅] `/admin` is blocked for customers and signed-out visitors
+- [✅] Dashboard shows orders, revenue, recent orders and low stock
+- [] Products: search, create, edit, upload and reorder images, assign several collections, pin to What's New, hide/delete
 - [ ] Collections: create a sub-collection; it appears in the header menu without code changes
 - [ ] Orders: change status paid → shipped (customer gets the "shipped" email) → delivered
 - [ ] Coupons, reviews (hide), home page content, navigation, pages and settings save and show on the site

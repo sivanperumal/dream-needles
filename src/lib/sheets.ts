@@ -23,7 +23,7 @@ export async function appendContactRow(row: {
       headers: { "Content-Type": "text/plain;charset=utf-8" }, // avoids a CORS preflight on Apps Script
       body: JSON.stringify({ ...row, secret }),
       redirect: "follow",
-      signal: AbortSignal.timeout(10_000),
+      signal: AbortSignal.timeout(20_000), // Apps Script can cold-start slowly
     });
     const body = (await res.json().catch(() => null)) as {
       ok?: boolean;

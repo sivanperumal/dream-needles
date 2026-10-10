@@ -1,6 +1,8 @@
 "use server";
 
 import { after } from "next/server";
+import { buildContactEmail } from "@/lib/email/contact-email";
+import { isReservedEmail, sendEmail } from "@/lib/email/mailer";
 import { appendContactRow } from "@/lib/sheets";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
@@ -67,6 +69,29 @@ export async function submitContact(
       message:
         "Sorry, we couldn't send your message. Please try again or email us.",
     };
+
+  // Email the store's support inbox (Admin → Settings → Support email).
+  after(async () => {
+    if (isReservedEmail(data.email)) return; // automated test submissions
+    const { data: settings } = await admin
+      .from("store_settings")
+      .select("contact_email")
+      .eq("id", 1)
+      .single();
+    if (!settings?.contact_email) {
+      console.warn(
+        "[contact] No support email set in Admin → Settings; skipped the notification email.",
+      );
+      return;
+    }
+    const result = await sendEmail(
+      buildContactEmail(data, settings.contact_email),
+    );
+    if (result.status === "failed")
+      console.warn(
+        `[contact] Notification email failed for ${saved.id}: ${result.error}`,
+      );
+  });
 
   after(async () => {
     const result = await appendContactRow({ id: saved.id, ...data });

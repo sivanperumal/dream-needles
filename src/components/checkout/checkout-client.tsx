@@ -2,6 +2,7 @@
 
 import {
   AlertCircle,
+  ArrowLeft,
   Check,
   ChevronDown,
   Clock,
@@ -239,6 +240,15 @@ export function CheckoutClient({
   return (
     <div className="container-page grid items-start gap-6 py-8 md:py-10 lg:grid-cols-[1fr_440px]">
       <h1 className="sr-only">Checkout</h1>
+      {!user && (
+        // Signed-out visitors can go back to browsing without signing in.
+        <Link
+          href="/"
+          className="-mb-2 flex w-fit items-center gap-2 text-[15px] font-medium text-brand hover:underline lg:col-span-2"
+        >
+          <ArrowLeft className="size-4" aria-hidden="true" /> Back to Shopping
+        </Link>
+      )}
       <div className="flex flex-col gap-5">
         {/* 1. Customer */}
         <Step
