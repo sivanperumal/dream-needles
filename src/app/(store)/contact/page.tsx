@@ -67,7 +67,7 @@ export default async function ContactPage() {
                 src="/images/store/Store-front-view-dream-needles-alt.jpg"
                 alt="Dream Needles store front"
                 width={404}
-                height={172}
+                height={176}
                 className="h-44 w-full object-cover"
               />
               <div className="absolute inset-0 flex items-end justify-between bg-linear-to-t from-[#210023]/80 to-transparent p-4">

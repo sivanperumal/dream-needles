@@ -22,7 +22,7 @@ export function AuthCard({
           <Image
             src="/images/brand/logo.svg"
             alt="Dream Needles"
-            width={232}
+            width={233}
             height={64}
             priority
             className="h-16 w-auto"

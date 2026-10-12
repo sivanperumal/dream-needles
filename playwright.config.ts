@@ -3,9 +3,11 @@ import { defineConfig } from "@playwright/test";
 /**
  * Visual QA: `npm run screenshots` captures pages at the three Figma widths
  * into e2e/__screenshots__/ for side-by-side comparison with the designs.
- * Set BASE_URL to use an already-running server (default starts `next dev`).
+ * Uses the `npm run dev` server on port 3000 if it is running, otherwise
+ * starts one (Next.js allows only one dev server per project folder).
+ * Set BASE_URL to test another server, e.g. a deployed preview.
  */
-const baseURL = process.env.BASE_URL ?? "http://localhost:3100";
+const baseURL = process.env.BASE_URL ?? "http://localhost:3000";
 
 export default defineConfig({
   testDir: "e2e",
@@ -29,7 +31,7 @@ export default defineConfig({
   webServer: process.env.BASE_URL
     ? undefined
     : {
-        command: "npm run dev -- --port 3100",
+        command: "npm run dev",
         url: baseURL,
         reuseExistingServer: true,
         timeout: 120_000,

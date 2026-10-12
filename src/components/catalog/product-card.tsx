@@ -52,7 +52,12 @@ export function ProductCard({
   return (
     <article className="group flex flex-col rounded-xl bg-white p-2 shadow-sm ring-1 ring-gray-100 transition-shadow hover:shadow-md">
       <div className="relative aspect-square overflow-hidden rounded-lg bg-[#f0f3ff]">
-        <Link href={href} tabIndex={-1} aria-hidden="true">
+        <Link
+          href={href}
+          tabIndex={-1}
+          aria-hidden="true"
+          className="absolute inset-0"
+        >
           <Image
             src={imageUrl(primary) ?? PLACEHOLDER_IMAGE}
             alt=""

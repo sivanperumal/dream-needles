@@ -511,17 +511,17 @@ Tick each item on the live site (Razorpay in test mode).
 
 - [✅] Submitting the form shows a success message
 - [✅] The message appears in the Google Sheet and in Admin → Contact submissions
-- [ ] An email "Contact Us: … (from …)" arrives at the support email set in Admin → Settings; pressing Reply answers the customer
-- [ ] At checkout, a signed-out visitor sees "Back to Shopping"
+- [] An email "Contact Us: … (from …)" arrives at the support email set in Admin → Settings; pressing Reply answers the customer
+- [] At checkout, a signed-out visitor sees "Back to Shopping"
 
 **Admin** (signed in as admin)
 
 - [✅] `/admin` is blocked for customers and signed-out visitors
 - [✅] Dashboard shows orders, revenue, recent orders and low stock
-- [] Products: search, create, edit, upload and reorder images, assign several collections, pin to What's New, hide/delete
-- [ ] Collections: create a sub-collection; it appears in the header menu without code changes
-- [ ] Orders: change status paid → shipped (customer gets the "shipped" email) → delivered
-- [ ] Coupons, reviews (hide), home page content, navigation, pages and settings save and show on the site
+- [✅] Products: search, create, edit, upload and reorder images, assign several collections, pin to What's New, hide/delete
+- [✅] Collections: create a sub-collection; it appears in the header menu without code changes
+- [✅] Orders: change status paid → shipped (customer gets the "shipped" email) → delivered
+- [] Coupons, reviews (hide), home page content, navigation, pages and settings save and show on the site
 
 ---
 
@@ -529,10 +529,17 @@ Tick each item on the live site (Razorpay in test mode).
 
 The project has two kinds of automated tests:
 
-| Command         | What it checks                                                                                                                              | Needs                                         |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
-| `npm run check` | Lint, types and 99 unit/database tests: pricing, coupons, Razorpay signatures, search (including typos), security rules, What's New, emails | Nothing (runs offline)                        |
-| `npm run e2e`   | Real browser tests: search, sign-in, cart merge, Razorpay test checkout + webhook, contact form + Google Sheet, admin panel                 | `npm run dev` running, `.env.local` filled in |
+| Command         | What it checks                                                                                                                               | Needs                  |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| `npm run check` | Lint, types and 100 unit/database tests: pricing, coupons, Razorpay signatures, search (including typos), security rules, What's New, emails | Nothing (runs offline) |
+| `npm run e2e`   | Real browser tests: search, sign-in, cart merge, Razorpay test checkout + webhook, contact form + Google Sheet, admin panel                  | `.env.local` filled in |
+
+`npm run e2e` uses your `npm run dev` server on http://localhost:3000 if it is
+running, and starts one itself if not. It takes about 3 minutes and ends with a
+summary such as `23 passed, 7 skipped`: that means everything worked (some
+tests run only on the desktop size, so the mobile copies are skipped). Lines
+starting with `[WebServer]` are the site's own log messages, not failures. A
+real failure is listed as `✘` with a red error under a `failed` count.
 
 `npm run e2e` creates temporary test users, orders, coupons and products in
 your Supabase project and deletes them afterwards. Test emails use the
